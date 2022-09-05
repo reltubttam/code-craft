@@ -1,21 +1,23 @@
 function MarsRover (opts) {
-  let position = opts.position;
-  let direction = opts.direction;
+  let _position = opts.position;
+  let _direction = opts.direction;
 
   return {
-    position,
-    direction,
     move: function (inputString) {
-      if (inputString == 'R') {
-        direction = 'south';
-      } else if (inputString == 'L') {
-        direction = 'north';
-      } else if (inputString == 'F') {
-        position = [6,6];
+      for (let instruction of inputString) {
+        if (instruction == 'R') {
+          _direction = 'south';
+        } else if (instruction == 'L') {
+          _direction = 'north';
+        } else if (instruction == 'F') {
+          _position = [++_position[0],6];
+        } else if (instruction == 'B') {
+          _position = [--_position[0],6]
+        }
       }
       return {
-        position,
-        direction,
+        position: _position,
+        direction: _direction,
       };
     },
   }
