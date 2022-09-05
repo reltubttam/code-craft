@@ -49,7 +49,7 @@ describe("Mars Rover", () => {
       direction: "east",
     }
     const rover = MarsRover(initialPositionAndDirection);
-    assert.deepEqual([6,6], rover.move('F'))
+    assert.deepEqual([6,6], rover.move('F').position)
   })
   // - Rover at position [5, 6] facing east with input "F" will update position to [6, 6]
   // - Rover goes forward

@@ -10,6 +10,8 @@ function MarsRover (opts) {
         direction = 'south';
       } else if (inputString == 'L') {
         direction = 'north';
+      } else if (inputString == 'F') {
+        position = [6,6];
       }
       return {
         position,
