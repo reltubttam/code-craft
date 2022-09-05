@@ -1,17 +1,20 @@
-function warehouse() {
+function Warehouse() {
   let cds = [];
   return {
     recieve: function (incomingCds) {
       cds.push(...incomingCds);
       return cds;
     },
-    getCDCount: function () {
-      return cds.length;
+    getTotalCDCount: function () {
+      return cds.map(({stockCount}) => stockCount).reduce((total, stockCount) => total + stockCount, 0);
     },
     searchCDsByArtist: function (queryArtist) {
-      return cds.find(({ artist }) => artist === queryArtist);
+      return cds.filter(({ artist }) => artist === queryArtist);
     },
+    searchCDsByTitle: function (queryTitle) {
+      return cds.filter(({title}) => title === queryTitle);
+    }
   };
 }
 
-module.exports = warehouse;
+module.exports = Warehouse;
