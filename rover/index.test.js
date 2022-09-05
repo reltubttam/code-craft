@@ -29,51 +29,68 @@ describe("Mars Rover", () => {
     const initialPositionAndDirection = {
       position: [0, 0],
       direction: "east",
-    }
+    };
     const rover = MarsRover(initialPositionAndDirection);
     assert.equal("south", rover.move("R").direction);
   });
 
   it("If rover starts facing east, 'L' will face the rover to the north", () => {
     const initialPositionAndDirection = {
-      position: [0,0],
+      position: [0, 0],
       direction: "east",
-    }
+    };
     const rover = MarsRover(initialPositionAndDirection);
     assert.equal("north", rover.move("L").direction);
-  })
+  });
+
+  it("If rover facing south, L will face East", () => {
+    const initialPositionAndDirection = {
+      position: [0, 0],
+      direction: "south",
+    };
+    const rover = MarsRover(initialPositionAndDirection);
+    assert.equal("east", rover.move("L").direction);
+  });
 
   it("Rover at postion [5,6] facing east with input 'F' will update position to [6,6]", () => {
     const initialPositionAndDirection = {
-      position: [5,6],
+      position: [5, 6],
       direction: "east",
-    }
+    };
     const rover = MarsRover(initialPositionAndDirection);
-    assert.deepEqual([6,6], rover.move('F').position)
-  })
+    assert.deepEqual([6, 6], rover.move("F").position);
+  });
 
-  it("Rover at position [5,6] facing east with input 'B' will update position to [4,6]",() => {
+  it("Rover at position [5,6] facing east with input 'B' will update position to [4,6]", () => {
     const initialPositionAndDirection = {
-      position: [5,6],
+      position: [5, 6],
       direction: "east",
-    }
+    };
     const rover = MarsRover(initialPositionAndDirection);
-    assert.deepEqual([4,6], rover.move('B').position)
-  })
+    assert.deepEqual([4, 6], rover.move("B").position);
+  });
 
   it("Rover at position [5,6] facing east with input 'FF' will update position to [7,6]", () => {
     const initialPositionAndDirection = {
-      position: [5,6],
-      direction: "east"
-    }
-    const rover = MarsRover(initialPositionAndDirection)
-    assert.deepEqual([7,6], rover.move('FF').position)
-  })
-
+      position: [5, 6],
+      direction: "east",
+    };
+    const rover = MarsRover(initialPositionAndDirection);
+    assert.deepEqual([7, 6], rover.move("FF").position);
+  });
 
   // - Rover at position [0, 0] facing east with input "B" will update position to [-1, 0]
   // - Rover can move to negative coordinates
   // - Rovers position updates correctly when moving to a negative value on the grid
+  it("Rover at position [0,0] facing east with input 'B' will update position to [-1, 0]", () => {
+    const initialPositionAndDirection = {
+      position: [0, 0],
+      direction: "east",
+    };
+
+    const rover = MarsRover(initialPositionAndDirection);
+    assert.deepEqual([-1, 0], rover.move("B").position);
+  });
 
   // - Rover at position [5, 6] facing east with input "LF" will update position to [5, 7]
   // - Rover can move and change direction
