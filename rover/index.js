@@ -1,12 +1,23 @@
-const marsRover = {
-  position: [0, 0],
-  direction: "east",
-  move: function (inputString) {
-    return {
-      position: this.position,
-      direction: this.direction,
-    };
-  },
+function MarsRover (opts) {
+  let position = opts.position;
+  let direction = opts.direction;
+
+  return {
+    position,
+    direction,
+    move: function (inputString) {
+      if (inputString == 'R') {
+        direction = 'south';
+      } else if (inputString == 'L') {
+        direction = 'north';
+      }
+      return {
+        position,
+        direction,
+      };
+    },
+  }
 };
 
-module.exports = marsRover;
+
+module.exports = MarsRover;
