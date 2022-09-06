@@ -161,7 +161,7 @@ describe.only("CD Warehouse", () => {
 
     assert.deepEqual(
       { id: 10, stockCount: 10 },
-      buy(10, decreaseCDStockLevelById, () => false, findById)
+      buy(10, decreaseCDStockLevelById, handlePayment, findById)
     );
   });
 
