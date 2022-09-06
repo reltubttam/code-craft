@@ -165,6 +165,51 @@ describe.only("CD Warehouse", () => {
     );
   });
 
+  it("notifies chart on purchase", () => {
+    const { buy } = Storefront();
+    const { decreaseCDStockLevelById, recieve, findById } = Warehouse();
+
+    let notifyChartsArgs = null;
+    function notifyCharts(...args) {
+      notifyChartsArgs = args
+    }
+
+    recieve([{ id: 11, artist: "Westlife", title: "Coast to Coast", stockCount: 10 }])
+
+    buy(11, decreaseCDStockLevelById, () => true, findById, 1, notifyCharts)
+
+    assert.deepEqual(
+      [{artist: "Westlife", title:"Coast to Coast", copies: 1}],
+      notifyChartsArgs
+    )
+  });
+
+  it ("can buy multiple cds", () => {
+    const { buy } = Storefront();
+    const { decreaseCDStockLevelById, recieve, findById } = Warehouse();
+
+    recieve([{ id: 10, stockCount: 10 }]);
+
+    assert.deepEqual(
+      {id: 10, stockCount: 8},
+      buy(10, decreaseCDStockLevelById, () => true, findById, 2)
+    )
+  });
+
+  it ("discounts albums in top 100", () => {
+    const {getPrice} = Storefront();
+    
+    assert.deepEqual(9.00,
+      getPrice({
+        title: "Jagged Little Pill",
+        artist: "Alanis Morissette",
+        stockCount: 13,
+        price: 11.00,
+        id: 12,
+      }, () => true, () => 10.00)
+    );
+  });
+
   // Get total count of all CDs in warehouse
   // Warehouse can receive CDs and total CD count will increase
   // Can search CD inventory

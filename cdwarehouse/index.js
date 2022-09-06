@@ -1,15 +1,27 @@
 function Storefront() {
   return {
-    buy: function (id, decrementCdCount, handlePayment, findById) {
+    buy: function (id, decrementCdCount, handlePayment, findById, quantity, notifyCharts) {
       const paymentSuccessful = handlePayment();
 
       if (!paymentSuccessful) {
         return findById(id);
       }
-      const boughtCd = decrementCdCount(id);
+      const boughtCd = decrementCdCount(id, quantity || 1);
+
+      if (notifyCharts) notifyCharts({
+          artist: boughtCd.artist,
+          title: boughtCd.title,
+          copies: quantity || 1,
+      })
 
       return boughtCd;
     },
+    getPrice: function (cd, getIsTop100, getLowestCompetitorPrice) {
+      if (getIsTop100(cd.name, cd.artist)){
+        return getLowestCompetitorPrice() - 1;
+      }
+      return cd.price
+    }
   };
 }
 
@@ -31,9 +43,9 @@ function Warehouse() {
     searchCDsByTitle: function (queryTitle) {
       return cds.filter(({ title }) => title === queryTitle);
     },
-    decreaseCDStockLevelById: function (cdId) {
+    decreaseCDStockLevelById: function (cdId, quantity=1) {
       const foundCd = cds.find(({ id }) => id === cdId);
-      foundCd.stockCount -= 1;
+      foundCd.stockCount -= quantity;
       return foundCd;
     },
     findById: function (cdId) {
@@ -41,5 +53,6 @@ function Warehouse() {
     },
   };
 }
+
 
 module.exports = { Warehouse, Storefront };
