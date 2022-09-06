@@ -1,5 +1,5 @@
 const assert = require("assert");
-const Warehouse = require("./index");
+const { Warehouse, Storefront } = require("./index");
 
 // Customers can buy CDs, searching on the title and the
 // artist. Their credit card payment is processed by an external provider. Record labels send batches of CDs to the warehouse. Keep a
@@ -32,7 +32,12 @@ describe.only("CD Warehouse", () => {
     const { getTotalCDCount, recieve } = Warehouse();
 
     recieve([
-      { title: "Greatest Hits", artist: "Michael Buble", stockCount: 13, id: 1 },
+      {
+        title: "Greatest Hits",
+        artist: "Michael Buble",
+        stockCount: 13,
+        id: 1,
+      },
       { title: "Bat Out of Hell", artist: "Meat Loaf", stockCount: 13, id: 2 },
     ]);
 
@@ -43,56 +48,122 @@ describe.only("CD Warehouse", () => {
     const { searchCDsByArtist, recieve } = Warehouse();
 
     recieve([
-      { title: "Greatest Hits", artist: "Michael Buble", stockCount: 13, id: 1 },
+      {
+        title: "Greatest Hits",
+        artist: "Michael Buble",
+        stockCount: 13,
+        id: 1,
+      },
       { title: "Bat Out of Hell", artist: "Meat Loaf", stockCount: 13, id: 2 },
     ]);
 
     assert.deepEqual(
-      [{ title: "Greatest Hits", artist: "Michael Buble", stockCount: 13, id: 1 }],
-      searchCDsByArtist("Michael Buble")
-    );
-  });
-
-
-  it("Can search for a CD by artist where multiple exist", () => {
-    const { searchCDsByArtist, recieve } = Warehouse();
-
-    recieve([
-      { title: "Greatest Hits", artist: "Michael Buble", stockCount: 13, id: 1 },
-      { title: "Call me irresponsible", artist: "Michael Buble", stockCount: 13, id: 2 },
-      { title: "Bat Out of Hell", artist: "Meat Loaf", stockCount: 13, id: 3 },
-    ]);
-
-    assert.deepEqual(
       [
-        { title: "Greatest Hits", artist: "Michael Buble", stockCount: 13, id: 1 },
-        { title: "Call me irresponsible", artist: "Michael Buble", stockCount: 13, id: 2 },
+        {
+          title: "Greatest Hits",
+          artist: "Michael Buble",
+          stockCount: 13,
+          id: 1,
+        },
       ],
       searchCDsByArtist("Michael Buble")
     );
   });
 
-  it ("Can search for a CD by title", () => {
-    const { searchCDsByTitle, recieve } = Warehouse();
+  it("Can search for a CD by artist where multiple exist", () => {
+    const { searchCDsByArtist, recieve } = Warehouse();
 
     recieve([
-      {title: "Toxicity", artist: "System of a Down", stockCount: 666, id: 4},
+      {
+        title: "Greatest Hits",
+        artist: "Michael Buble",
+        stockCount: 13,
+        id: 1,
+      },
+      {
+        title: "Call me irresponsible",
+        artist: "Michael Buble",
+        stockCount: 13,
+        id: 2,
+      },
+      { title: "Bat Out of Hell", artist: "Meat Loaf", stockCount: 13, id: 3 },
     ]);
 
     assert.deepEqual(
-      [{title: "Toxicity", artist: "System of a Down", stockCount: 666, id: 4}],
-      searchCDsByTitle("Toxicity")
-    )
-  })
+      [
+        {
+          title: "Greatest Hits",
+          artist: "Michael Buble",
+          stockCount: 13,
+          id: 1,
+        },
+        {
+          title: "Call me irresponsible",
+          artist: "Michael Buble",
+          stockCount: 13,
+          id: 2,
+        },
+      ],
+      searchCDsByArtist("Michael Buble")
+    );
+  });
 
-  // it ("buying a cd out of stock fails", () => {
-  //   try {
-  //     buy(id)
-  //   } catch (err) {
-  //     assert.equal(err.message, "NOT IN STOCK")
-  //   }
-    
-  // })
+  it("Can search for a CD by title", () => {
+    const { searchCDsByTitle, recieve } = Warehouse();
+
+    recieve([
+      { title: "Toxicity", artist: "System of a Down", stockCount: 666, id: 4 },
+    ]);
+
+    assert.deepEqual(
+      [
+        {
+          title: "Toxicity",
+          artist: "System of a Down",
+          stockCount: 666,
+          id: 4,
+        },
+      ],
+      searchCDsByTitle("Toxicity")
+    );
+  });
+
+  it("Can buy a CD from the warehouse", () => {
+    const { buy } = Storefront();
+    const { decreaseCDStockLevelById, recieve } = Warehouse();
+
+    recieve([
+      { title: "Toxicity", artist: "System of a Down", stockCount: 666, id: 4 },
+    ]);
+
+    assert.deepEqual(
+      { title: "Toxicity", artist: "System of a Down", stockCount: 665, id: 4 },
+      buy(4, decreaseCDStockLevelById, () => true)
+    );
+  });
+
+  it("Can Decrease CD Stock level by ID", () => {
+    const { decreaseCDStockLevelById, recieve } = Warehouse();
+    recieve([{ id: 10, stockCount: 10 }]);
+
+    assert.deepEqual({ id: 10, stockCount: 9 }, decreaseCDStockLevelById(10));
+  });
+
+  it("Don't change stock level if payment fails", () => {
+    const { buy } = Storefront();
+    const { decreaseCDStockLevelById, recieve, findById } = Warehouse();
+
+    recieve([{ id: 10, stockCount: 10 }]);
+
+    function handlePayment() {
+      return false;
+    }
+
+    assert.deepEqual(
+      { id: 10, stockCount: 10 },
+      buy(10, decreaseCDStockLevelById, () => false, findById)
+    );
+  });
 
   // Get total count of all CDs in warehouse
   // Warehouse can receive CDs and total CD count will increase
