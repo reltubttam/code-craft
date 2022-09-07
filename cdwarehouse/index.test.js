@@ -11,7 +11,7 @@ const { Warehouse, Storefront } = require("./index");
 // Warehouse recieves CDs
 // Customers can review
 
-describe.only("CD Warehouse", () => {
+describe("CD Warehouse", () => {
   it("Warehouse returns no CDs if none in stock", () => {
     const { getTotalCDCount } = Warehouse();
 
@@ -198,7 +198,7 @@ describe.only("CD Warehouse", () => {
 
   it ("discounts albums in top 100", () => {
     const {getPrice} = Storefront();
-    
+
     assert.deepEqual(9.00,
       getPrice({
         title: "Jagged Little Pill",
